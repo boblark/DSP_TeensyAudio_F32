@@ -63,14 +63,7 @@ void AudioFilterFIRGeneral_F32::update(void)  {
   t2 = tElapse;
   if(iitt++ < 0) {Serial.print("At FIRGeneral end, microseconds = "); Serial.println (t2 - t1); //           }
 	Serial.print("numtaps = "); Serial.println (fir_inst.numTaps); 
-	}//Serial.print("blocksize = "); Serial.println (fir_inst.blockSize);
- /* numTaps  Number of filter coefficients in the filter.    
- * @param[in]     *pCoeffs points to the filter coefficients buffer.    
- * @param[in]     *pState points to the state buffer.    
- * @param[in] 	  blockSize number of samples that are processed per call.  
-  */
-  
-  
+	}
   t1 = tElapse;
 #endif
 }
