@@ -68,10 +68,6 @@
  *   Accurate acosf(x) seems to vary (with x?), 150 to 350 microsecond range
  *
  * Copyright (c) 2020 Bob Larkin
- * Any snippets of code from PJRC or Chip Audette used here brings with it
- * the associated license.
- *
- * In addition, work here is covered by MIT LIcense:
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -120,14 +116,14 @@ class AudioAnalyzePhase_F32 : public AudioStream_F32 {
 public:
     // Option of AudioSettings_F32 change to block size or sample rate:
     AudioAnalyzePhase_F32(void) :  AudioStream_F32(2, inputQueueArray_f32) { // default block_size and sampleRate_Hz
-		// Initialize BiQuad IIR instance (ARM DSP Math Library)
+	// Initialize BiQuad IIR instance (ARM DSP Math Library)
         arm_biquad_cascade_df1_init_f32(&iir_inst, N_STAGES, &iir_coeffs[0],  &IIRStateF32[0]);
     }
     // Constructor including new block_size and/or sampleRate_Hz
     AudioAnalyzePhase_F32(const AudioSettings_F32 &settings) :  AudioStream_F32(2, inputQueueArray_f32) {
         block_size = settings.audio_block_samples;
 	    sampleRate_Hz = settings.sample_rate_Hz;        
-	    // Initialize BiQuad IIR instance (ARM DSP Math Library)
+	// Initialize BiQuad IIR instance (ARM DSP Math Library)
         arm_biquad_cascade_df1_init_f32(&iir_inst, N_STAGES, &iir_coeffs[0],  &IIRStateF32[0]);
     }
 
