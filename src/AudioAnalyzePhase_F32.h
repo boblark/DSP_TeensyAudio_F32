@@ -100,7 +100,7 @@
 #define DEGREES_PHASE 57.295779
 
 // Test the number of microseconds to execute update()
-#define TEST_TIME 1
+#define TEST_TIME 0
 
 #define LIMITER_MASK 0b00001
 #define ACOS_MASK    0b00110
