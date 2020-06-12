@@ -33,3 +33,6 @@ build/
 
 # ignore all .pdf files in the doc/ directory and any of its subdirectories
 doc/**/*.pdf
+
+# raw spread sheets tucked along side .ino's.  Send resulting graphs
+*.gnumeric

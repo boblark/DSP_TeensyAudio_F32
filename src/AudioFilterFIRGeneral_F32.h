@@ -80,11 +80,6 @@
  * dynamically.  This function can be changed dynamically, but it may be desireable to
  * mute the audio during the change to prevent clicks.
  *
- * For a pass-through function, something like this (which can be intermixed with fancy equalizers):
- * float32_t fBand[] = {10000.0f, 22058.5f};
- * float32_t dbBand[] = {0.0f, 0.0f};
- * equalize1.equalizerNew(2, &fBand[0], &dbBand[0], 4, &equalizeCoeffs[0], 30.0f, 32767.0f);
- *
  * Measured timing of update() for L or R 128 sample block, Teensy 3.6:
  *     Fixed time 13 microseconds
  *     Per FIR Coefficient time 2.5 microseconds (about 51E6 multiply and accumulates/sec)
@@ -104,6 +99,10 @@
  *      frequency response.
  *   LoadCoeffs(nFIR, cf32f, *pStateArray);    // To directly load FIR coefficients cf32f[]
  *   getResponse(nFreq, *rdb);   // To obtain the amplitude response in dB, rdb[]
+ * 
+ * Status: Tested T3.6, T4.0  No known bugs
+ * 
+ * Examples: TestFIRGeneralLarge4.ino   TestFIRGeneralLarge5.ino
  * 
  * Copyright (c) 2020 Bob Larkin
  * Any snippets of code from PJRC or Chip Audette used here brings with it
@@ -143,7 +142,7 @@
 #endif
 
 // Temporary timing test
-#define TEST_TIME_FIRG 1
+#define TEST_TIME_FIRG 0
 
 #define ERR_FIRGEN_BANDS 1
 #define ERR_FIRGEN_SIDELOBES 2

@@ -8,3 +8,5 @@
 #include "analyze_rms_f32.h"
 #include "analyze_peak_f32.h"
 #include "mathAtan2_F32.h"
+#include "AudioFilterEqualizer_F32.h"
+#include "AudioFilterFIRGeneral_F32.h"
