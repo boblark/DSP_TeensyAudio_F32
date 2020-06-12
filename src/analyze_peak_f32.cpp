@@ -45,12 +45,6 @@ void AudioAnalyzePeak_F32::update(void) {
         return;
     }
 
-#if TEST_TIME_PEAK
-    if (iitt++ >1000000) iitt = -10;
-    uint32_t t1, t2; 
-    t1 = tElapse;
-#endif
-
     // Variable just_read allows both read() and readPeakToPeak() to be used
     if(just_read) {
 		// Start new collection of min_sample and max_sample
@@ -71,15 +65,7 @@ void AudioAnalyzePeak_F32::update(void) {
 	max_sample = max;
 	new_output = true;    // Tell available() that data is available
     AudioStream_F32::release(blockIn);
-    
-#if TEST_TIME_PEAK    
-  t2 = tElapse;
-  if(iitt++ < 0) {
-	 Serial.print("End AnalyzePeak Update, microsec: ");
-	 Serial.println (t2 - t1);
-  }
-#endif    
-}
+ }
 
 float AudioAnalyzePeak_F32::read(void)  {
 	    // Tell update to start new

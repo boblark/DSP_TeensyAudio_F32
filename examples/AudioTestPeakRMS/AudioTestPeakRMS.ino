@@ -9,6 +9,8 @@
 
 #include "Audio.h"
 #include <OpenAudio_ArduinoLibrary.h>
+#include "analyze_peak_f32.h"
+#include "analyze_rms_f32.h"
 
 AudioInputI2S               i2s1; 
 AudioSynthWaveformSine_F32  sine1;

@@ -8,6 +8,7 @@
 
 #include "Audio.h"
 #include <OpenAudio_ArduinoLibrary.h>
+#include "DSP_TeensyAudio_F32.h"
 
 AudioInputI2S               i2s1;
 AudioSynthWaveformSine_F32  sine1;      // Test signal

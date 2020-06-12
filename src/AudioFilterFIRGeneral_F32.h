@@ -145,9 +145,9 @@
 // Temporary timing test
 #define TEST_TIME_FIRG 1
 
-#define ERR_GENFIR_BANDS 1
-#define ERR_GENFIR_SIDELOBES 2
-#define ERR_GENFIR_NFIR 3
+#define ERR_FIRGEN_BANDS 1
+#define ERR_FIRGEN_SIDELOBES 2
+#define ERR_FIRGEN_NFIR 3
 
 class AudioFilterFIRGeneral_F32 : public AudioStream_F32
 {

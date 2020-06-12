@@ -34,7 +34,7 @@
   * calculated over multiple blocks.  Useful for audio level response projects,
   * and general troubleshooting.
   * 
-  * Status:  Tested, no known bugs
+  * Status:  Tested 3.6 and 4.0, no known bugs
   * Functions:
   *   available(); Returns true if new peak data is available.
   *   read();      Read the new peak value.
@@ -43,8 +43,8 @@
   * Examples:
   *   TestPeakRMS.ino
   *   Similar: File > Examples > Audio > Analysis > PeakAndRMSMeterStereo
-  * Time: Measured Teensy 3.6 time for the update of F32 RMS is 10 microseconds,
-  *     for 128 block size.
+  * Time: Measured Teensy 3.6 time for the update() is 10 microseconds,
+  *     for 128 block size. For Teensy 4.0 this is about 4 mcroseconds.
   *
   * The two variables, min_sample and max_sample, are checked until
   * an available() takes place. This is fine if the statistics of the input data are
@@ -57,9 +57,6 @@
 
 #include "Arduino.h"
 #include "AudioStream_F32.h"
-
-// If 1, measure the time in update()
-#define TEST_TIME_PEAK 0
 
 class AudioAnalyzePeak_F32 : public AudioStream_F32 {
 //GUI: inputs:1, outputs:0  //this line used for automatic generation of GUI node
@@ -95,12 +92,6 @@ private:
     volatile bool just_read = true;
     float32_t min_sample;
     float32_t max_sample;
-
-#if TEST_TIME_PEAK
-//  *Temporary* - allows measuring time in microseconds in update()
-elapsedMicros tElapse;
-int32_t iitt = 999000;     // count up to a million during startup
-#endif
 
     // Control error printing in update().  Should never be enabled
     // until all audio objects have been initialized.

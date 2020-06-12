@@ -34,7 +34,7 @@
   * calculated over multiple blocks.  Useful for audio level response projects,
   * and general troubleshooting.
   * 
-  * Status: Tested.  Any bug reports?
+  * Status: Tested 3.6 and T4.0  No known bugs.
   * Functions:
   *   available();  Returns true if new RMS data is available.
   *   read();       Read the new RMS value. Return is rms value in float.

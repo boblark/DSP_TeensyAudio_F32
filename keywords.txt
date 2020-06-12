@@ -1,0 +1,29 @@
+#library name
+DSP_TeensyAudio_F32	KEYWORD1
+
+AudioFilter90Deg_F32	KEYWORD1
+
+RadioFMDetector_F32	KEYWORD1
+
+AudioAnalyzePhase_F32	KEYWORD1
+
+AudioSynthSineCosine_F32	KEYWORD1
+
+RadioIQMixer_F32	KEYWORD1
+
+AudioAnalyzeRMS_F32	KEYWORD1
+available		KEYWORD2
+read		KEYWORD2
+
+AudioAnalyzePeak_F32	KEYWORD1
+available		KEYWORD2
+read		KEYWORD2
+readPeakToPeak		KEYWORD2
+
+MathAtan2_F32	KEYWORD1
+
+AudioSwitch4_F32	KEYWORD1
+
+RadioIQMixer_F32	KEYWORD1
+
+AudioFilter90Deg_F32	KEYWORD1

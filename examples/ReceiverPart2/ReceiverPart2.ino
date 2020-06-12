@@ -33,12 +33,15 @@
  *   
  *   FM Det gives 0.50 out for about 5.6 kHz p-p deviation
  *   
- *   Processor load, measured: 16% for NBFM
- *                             30% for LSB or USB 29 tap LPF)
+ *   T3.6 Processor load, measured: 16% for NBFM
+ *                                  30% for LSB or USB 29 tap LPF
+ *   T4.0 Processor load, measured: 4.3% for NBFM
+ *                                  6.5% for LSB or USB 29 tap LPF
  */
 
 #include "Audio.h"
 #include <OpenAudio_ArduinoLibrary.h>
+#include "DSP_TeensyAudio_F32.h"
 
 // *********  Mini Control Panel  *********
 // Set mode and gain here and re-compile
@@ -47,24 +50,30 @@
 #define LSB  1
 #define USB  2
 #define NBFM 3
-uint16_t  mode = USB;   // <--Select mode
+uint16_t  mode = NBFM;   // <--Select mode
 
 int gainControlDB = 0;  // Set SSB gain in dB. 0 dB is a gain of 1.0
 
 // *****************************************
-AudioInputI2S_F32           i2sIn;
-AudioSwitch4_F32            switch1;    // Select SSB or FM
-RadioIQMixer_F32            iqmixer1;
-AudioFilter90Deg_F32        hilbert1;
-AudioMixer4_F32             sum1;       // Summing node for the SSB receiver
-AudioFilterFIR_F32          fir1;       // Low Pass Filter to frequency limit the SSB
-RadioFMDetector_F32         fmdet1;     // NBFM from 10 to 20 kHz
-AudioMixer4_F32             sum2;       // SSB and NBFM rejoin here
-AudioOutputI2S_F32          i2sOut;
-AudioAnalyzePeak_F32        peak1;
-AudioControlSGTL5000        sgtl5000_1;
+// To work with T4.0 the I2S routine outputs 16-bit integer (I16).  Then
+// use Audette I16 to F32 convert.  Same below for output, in reverse.
+AudioInputI2S           i2sIn;
+AudioConvert_I16toF32   cnvrt1;
+AudioSwitch4_F32        switch1;    // Select SSB or FM
+RadioIQMixer_F32        iqmixer1;
+AudioFilter90Deg_F32    hilbert1;
+AudioMixer4_F32         sum1;       // Summing node for the SSB receiver
+AudioFilterFIR_F32      fir1;       // Low Pass Filter to frequency limit the SSB
+RadioFMDetector_F32     fmdet1;     // NBFM from 10 to 20 kHz
+AudioMixer4_F32         sum2;       // SSB and NBFM rejoin here
+AudioConvert_F32toI16   cnvrt2;     // Left
+AudioConvert_F32toI16   cnvrt3;     // Right
+AudioOutputI2S          i2sOut;
+AudioAnalyzePeak_F32    peak1;
+AudioControlSGTL5000    sgtl5000_1;
 
-AudioConnection_F32     connect0(i2sIn,    0, switch1,  0);  // Analog to Digital
+AudioConnection         conI16_1(i2sIn,    0, cnvrt1,   0);  // ADC
+AudioConnection_F32     connect0(cnvrt1,   0, switch1,  0);  // Analog to Digital
 AudioConnection_F32     connect1(switch1,  0, iqmixer1, 0);  // SSB Input
 AudioConnection_F32     connect2(switch1,  0, iqmixer1, 1);  // SSB Input
 AudioConnection_F32     connect3(switch1,  1, fmdet1,   0);  // FM input
@@ -75,9 +84,12 @@ AudioConnection_F32     connect7(hilbert1, 1, sum1,     1);
 AudioConnection_F32     connect8(sum1,     0, fir1,     0);   // Limit audio BW
 AudioConnection_F32     connect9(fir1,     0, sum2,     0);   // Output of SSB
 AudioConnection_F32     connectA(fmdet1,   0, sum2,     1);   // Output of FM
-AudioConnection_F32     connectC(sum2,     0, i2sOut,   0);   // Out to the CODEC left
-AudioConnection_F32     connectD(sum2,     0, i2sOut,   1);   // and right
-AudioConnection_F32     connectE(sum2,     0, peak1,   0);
+AudioConnection_F32     connectC(sum2,     0, cnvrt2,   0);   // Out to the CODEC left
+AudioConnection_F32     connectD(sum2,     0, cnvrt3,   0);   // and right
+AudioConnection_F32     connectE(sum2,     0, peak1,    0);
+AudioConnection         conI16_2(cnvrt2,   0, i2sOut,   0);   // DAC
+AudioConnection         conI16_3(cnvrt3,   0, i2sOut,   1);   // DAC
+
 // Filter for AudioFilter90Deg_F32 hilbert1 
 #include "hilbert251A.h"
 
@@ -96,8 +108,8 @@ float32_t fir_IQ29[29] = {
 
 void setup(void) {
   float32_t vGain;
-  AudioMemory(6);
-  AudioMemory_F32(10);
+  AudioMemory(5);
+  AudioMemory_F32(5);
   Serial.begin(300);  delay(1000);
 
   // Enable the audio shield, select input, and enable output

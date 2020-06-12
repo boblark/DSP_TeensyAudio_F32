@@ -7,7 +7,25 @@
  *    (AudioFilterFIR credited to Pete (El Supremo))
  *    and of course, to PJRC for the Teensy and Teensy Audio Library
  *
- * MIT License,  Use at your own risk.
+ * Copyright (c) 2020 Bob Larkin
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 /* This consists of a single input at some frequency, such as 10 to 20 kHz and
@@ -34,7 +52,9 @@
  * are used.  These are again programmable and default to a 29-tap LPF with
  * a 5 kHz cutoff.
  * 
- * Status: Tested static, still needing test
+ * Status: Tested static, tested with FM modulated Fluke 6061B.
+ *         An input of about 60 microvolts to the SGTL5000 gave 12 dB SINAD.
+ *         The output sounded good. Tested T3.6 and T4.0. No known bugs
  * 
  * Output: Float, sensitivity is 2*pi*(f - fCenter)*sample_rate_Hz
  *         For 44117Hz samplerate, this is 0.000142421 per Hz
@@ -69,15 +89,15 @@
  *                  in the IQ FIR Coefficients or quantity. B0010 (value 2) is
  *                  an error in the Output FIR Coefficients or quantity. For debug.
  * 
- *    showError(uint16_t e) Turns error printing in the update function on (e=1)
- *                  or off (e=0).  For debug.
+ *   showError(uint16_t e) Turns error printing in the update function on (e=1)
+ *                  or off (e=0).  For debug only.
  *
- * Time:            For an update of a 128 sample block, 370 microseconds, or
- *                  2.9 microseconds per data point (T3.6)
+ * Time:            For T3.6, an update of a 128 sample block, 370 microseconds, or
+ *                  2.9 microseconds per data point.
+ *                  For T4.0, 87 microseconds, or 0.68 microseconds per data point.
  * 
  * Error checking:  See functions setSampleRate_Hz() and returnInitializeFMError()
  *                  above.
- *
  */
 
 #ifndef _radioFMDetector_f32_h

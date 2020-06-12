@@ -10,8 +10,25 @@
  * Routines are from the arm CMSIS library and use a 512 point lookup
  * table with linear interpolation to achieve float accuracy limits.
  *
- * License: MIT License. Use at your own risk.
+ * Copyright (c) 2020 Bob Larkin
  *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 #include "synth_sin_cos_f32.h"
@@ -19,17 +36,10 @@
 // 513 values of the sine wave in a float array:
 #include "sinTable512_f32.h"
 
-// update() block of 128 with doSimple is 36 microseconds
-// Same using flexible doSimple=0 is      49 microseconds
 void AudioSynthSineCosine_F32::update(void) {
     audio_block_f32_t *blockS, *blockC;
     uint16_t index, i;
     float32_t a, b, deltaPhase, phaseC;
-#if TEST_TIME_SC
-    if (iitt++ >1000000) iitt = -10;
-    uint32_t t1, t2; 
-    t1 = tElapse;
-#endif
 
     blockS = AudioStream_F32::allocate_f32();   // Output blocks
     if (!blockS)  return;
@@ -84,10 +94,6 @@ void AudioSynthSineCosine_F32::update(void) {
           blockC->data[i] = amplitude_pk * (a + 0.001953125*(b-a)*deltaPhase);  /* Linear interpolation process */
         }
     }
-#if TEST_TIME_SC    
-  t2 = tElapse;
-  if(iitt++ < 0) {Serial.print("End Update, microsec: ");  Serial.println (t2 - t1); }
-#endif     
     AudioStream_F32::transmit(blockS, 0);
     AudioStream_F32::release (blockS);       
     AudioStream_F32::transmit(blockC, 1);

@@ -2,7 +2,7 @@
  * AudioAnalyzePhase_F32.h
  *
  * 31 March 2020, Rev 8 April 2020  
- * Status Tested OK, Still Beta
+ * Status Tested OK T3.6 and T4.0. 
  * Bob Larkin, in support of the library:
  * Chip Audette, OpenAudio, Apr 2017
  *     -------------------
@@ -44,7 +44,7 @@
  * Functions:
  *    setAnalyzePhaseConfig(const uint16_t LPType, float32_t *pCoeffs, uint16_t nCoeffs)
  *    setAnalyzePhaseConfig(const uint16_t LPType, float32_t *pCoeffs, uint16_t nCoeffs, uint16_t pdConfig)
- *    are used to chhange the output filter from the IIR default, where:
+ *      are used to chhange the output filter from the IIR default, where:
  *        LPType is  NO_LP_FILTER, IIR_LP_FILTER, FIR_LP_FILTER to select the output filter
  *        pCoeffs is a pointer to filter coefficients, either IIR or FIR 
  *        nCoeffs is the number of filter coefficients
@@ -54,18 +54,22 @@
  *                       10=Fast, math-continuous acos() (default)    11=Accurate acosf()
  *          Bit 3: 0=No scale of multiplier  1=scale to min-max (default)
  *          Bit 4: 0=Output in degrees    1=Output in radians (default)
- *
  *    showError(uint16_t e) sets whether error printing comes from update (e=1) or not (e=0).
  * 
- * Some measured time data for a 128 size block update():
+ * Examples:   AudioTestAnalyzePhase.ino and AudioTestSinCos.ino 
+ * 
+ * Some measured time data for a 128 size block, Teensy 3.6, parts of update():
  *   Default settings, total time 123 microseconds
  *   Overhead of update(), loading arrays, handling blocks, less than 2 microseconds
  *   Min-max calculation, 23 microseconds
  *   Multiplier DBMixer  8 microseconds
  *   IIR LPF (default filter)  57 microseconds
- *   53-term FIR filter  149 microseconds
+ *   53-term FIR filter  149 microseconds 
  *   Fast acos_32() linearizer  32 microseconds
  *   Accurate acosf(x) seems to vary (with x?), 150 to 350 microsecond range
+ * 
+ * Measured total update() time for the min-max scaling, fast acos(), and 53-term FIR filtering
+ *      case is 214 microseconds for Teensy 3.6 and 45 microseconds for Teensy 4.0.
  *
  * Copyright (c) 2020 Bob Larkin
  *
@@ -100,7 +104,7 @@
 #define DEGREES_PHASE 57.295779
 
 // Test the number of microseconds to execute update()
-#define TEST_TIME 0
+#define TEST_TIME 1
 
 #define LIMITER_MASK 0b00001
 #define ACOS_MASK    0b00110
@@ -200,7 +204,7 @@ private:
     //  *Temporary* - TEST_TIME allows measuring time in microseconds for each part of the update()
 #if TEST_TIME
     elapsedMicros tElapse;
-    int32_t iitt = 999000;     // count up to a million during startup
+    int32_t iitt = 998000;     // count up to a million during startup
 #endif
 
     /* FIR filter designed with http://t-filter.appspot.com

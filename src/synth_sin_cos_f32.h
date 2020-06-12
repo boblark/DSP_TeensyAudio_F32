@@ -26,14 +26,35 @@
  * Phase of Cosine:  pi/2 radians (90.0 deg) ahead of Sine
  * Amplitude:  -1.0 to 1.0
  * 
- * License: MIT License. Use at your own risk.
+ * Time: T3.6 update() block of 128 with doSimple is 36 microseconds
+ *       Same using flexible doSimple=false is       49 microseconds
+ *       T4.0 update() block of 128 with doSimple is 16 microseconds
+ *       Same using flexible doSimple=false is       24 microseconds
+ * 
+ * Copyright (c) 2020 Bob Larkin
  *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 #ifndef synth_sin_cos_f32_h_
 #define synth_sin_cos_f32_h_
 
-// #include "Arduino.h"
 #include "AudioStream_F32.h"
 #include "arm_math.h"
 
@@ -50,8 +71,6 @@
 #endif
 
 #define MF2_PI 6.2831853f
-
-#define TEST_TIME_SC 0
 
 class AudioSynthSineCosine_F32 : public AudioStream_F32  {
 //GUI: inputs:0, outputs:2 //this line used for automatic generation of GUI node
@@ -103,7 +122,8 @@ public:
         return;
     }
 
-     // Speed up calculations by setting phaseS_C=90deg, amplitude=1
+     // Speed up calculations by setting phaseS_C=90deg, amplitude=1  
+     // Note, s=true will override any setting of phaseS_C_r or amplitude.
      void simple(bool s) {
         doSimple = s;
         if(doSimple) {
@@ -128,12 +148,6 @@ public:
     virtual void update(void);
 
 private:
-#if TEST_TIME_SC
-//  *Temporary* - TEST_TIME_SC allows measuring time in microseconds for each part of the update()
-elapsedMicros tElapse;
-int32_t iitt = 999000;     // count up to a million during startup
-#endif
-
     float32_t freq = 1000.0f;
     float32_t phaseS = 0.0f;
     float32_t phaseS_C = 128.00;

@@ -4,10 +4,28 @@
  * 31 March 2020  Rev 8 April 2020
  * Bob Larkin, in support of the library:
  * Chip Audette, OpenAudio, Apr 2017
- * MIT License,  Use at your own risk.
-*/
-/*
- * There are two inputs, I and Q (Left and Right  or 0 and 1)
+ *
+ *  * Copyright (c) 2020 Bob Larkin
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/* There are two inputs, I and Q (Left and Right  or 0 and 1)
  * There is one output, the phase angle between the two inputs expressed in
  * radians (180 degrees is Pi radians).  See AudioAnalyzePhase_F32.h
  * for details.
@@ -20,7 +38,8 @@
 void AudioAnalyzePhase_F32::update(void) {
   audio_block_f32_t *block0, *block1;
   uint16_t i;
-  float32_t mult0, mult1, min0, max0, minmax0, min1, max1, minmax1, min_max;
+  float32_t mult0, mult1, min0, max0, minmax0, min1, max1, minmax1;
+  float32_t min_max = 1.0f;   // Filled in correctly, later 
   mathDSP_F32 mathDSP1;
   
 #if TEST_TIME
@@ -43,7 +62,7 @@ void AudioAnalyzePhase_F32::update(void) {
      AudioStream_F32::release(block0);
    return;
   }
-
+	
    // Limiter on both inputs; can be used with narrow IIR filter
    if (pdConfig & LIMITER_MASK) {
       for (uint16_t j = 0; j<block0->length; j++) {
@@ -80,7 +99,7 @@ void AudioAnalyzePhase_F32::update(void) {
    // filter  and then apply ArcCos of the result to return the phase difference
    // in radians.  Multiply and leave result in 1
    arm_mult_f32(block0->data, block1->data, block1->data, block0->length);
-	
+
    if (LPType == NO_LP_FILTER) {
        for (i=0; i < block0->length; i++)
            block0->data[i] = block1->data[i];   // Move back to block0

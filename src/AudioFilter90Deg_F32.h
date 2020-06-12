@@ -40,7 +40,7 @@
  * Hills program can design a Hilbert Transform filter. Use begin(*pCoeff, nCoeff) 
  * in the .INO to initialize this block.
  *
- * Status: Tested.  Any bug reports?
+ * Status: Tested T3.6 and T4.0.  No known bugs.
  * Functions:
  *   begin(*pCoeff, nCoeff);  Initializes this block, with:
  *         pCoeff = pointer to array of F32 Hilbert Transform coefficients
@@ -54,6 +54,7 @@
  *     19 tap Hilbert (including 0's)  74 microseconds
  *    121 tap Hilbert (including 0's) 324 microseconds
  *    251 tap Hilbert (including 0's) 646 microseconds
+ *   Same 121 tap Hilbert on T4.0 is 57 microseconds per update()
  */
 
 #ifndef _filter_90deg_f32_h
@@ -62,7 +63,7 @@
 #include "AudioStream_F32.h"
 #include "arm_math.h"
 
-#define TEST_TIME_90D 0
+#define TEST_TIME_90D 1
 
 // Following supports a maximum FIR Hilbert Transform of 251
 #define HILBERT_MAX_COEFFS 251

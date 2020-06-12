@@ -9,10 +9,14 @@
 
 #include "Audio.h"
 #include <OpenAudio_ArduinoLibrary.h>
+#include "DSP_TeensyAudio_F32.h"
 
 #define NBLOCKS 8
-
-AudioInputI2S               i2s1; 
+// Necessary foraudio stream
+AudioInputI2S               i2s1;
+AudioConvert_I16toF32       convert; 
+AudioConnection             pcI16(i2s1, 0, convert, 0);
+// And the experiment
 AudioSynthSineCosine_F32    sincos1;
 AudioRecordQueue_F32        queue1;
 AudioRecordQueue_F32        queue2;
@@ -35,14 +39,18 @@ void setup(void) {
   AudioMemory_F32(20);  //allocate Float32 audio data blocks
   Serial.begin(300);  delay(1000);
 
+  // simple() is not needed here, as it is default unless amplitude or
+  // phaseS_C_r is changed.  But, it can be used to restore simple after
+  // involking changes.  Here it is just a sample of usage.
+  sincos1.simple(true);
   // Default amlitude +/- 1.0
   sincos1.frequency(1212.345);
   // If either or both of the following two are uncommented, the
   // detailed, slower, sincos will be used:
-  // sincos1.amplitude(0.9);  // It will invoke doSimple=true
+  // sincos1.amplitude(0.9);
   // sincos1.phaseS_C_r(120.00*M_PI/180.0); // Test non-90 degree, like 120 deg
 
-  // Set next to 1 to  print errors in update(), or remove statement
+  // Set next to 1 to  print errors in update(), or 0 for no print.  For debug only
   phase1.showError(0);
   
   queue1.begin();
@@ -75,7 +83,8 @@ void loop(void) {
     i = NBLOCKS + 1;   // Should stop data collection
     queue1.end();  // No more data to queue1
     queue2.end();  // No more data to queue2
-    Serial.println("11024 Sine, Cosine, Phase Data Points:");
+
+    Serial.println("1024 Sine, Cosine, Phase Data Points:");
     for (k=0; k<128*NBLOCKS; k++) {
       Serial.print (dt1[k],7);
       Serial.print (",");
